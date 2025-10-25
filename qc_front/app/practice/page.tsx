@@ -7,7 +7,7 @@ export default function Practice() {
 
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
-    const jwt = sp.get("token"); // ←ここを "jwt" → "token" に変更！
+    const jwt = sp.get("token"); // ← "jwt" → "token" に変更！
     const base =
       process.env.NEXT_PUBLIC_API_BASE || "https://qc-api.onrender.com";
 
@@ -16,17 +16,32 @@ export default function Practice() {
       return;
     }
 
-    fetch(`${base}/practice?jwt=${encodeURIComponent(jwt)}`)
+    const api = base.replace(/\/+$/, ""); // スラッシュ重複対策
+
+    fetch(`${api}/practice?jwt=${encodeURIComponent(jwt)}`)
       .then(async (r) => {
         if (!r.ok) throw new Error(`Error: ${r.status} ${r.statusText}`);
         return r.json();
       })
       .then((j) => setData(j))
-      .catch((e) => setError(e.message));
+      .catch((e) => setError(String(e.message)));
   }, []);
 
-  // 以下、描画部分はそのままでOK
+  return (
+    <main className="mx-auto max-w-2xl p-4">
+      <h1 className="text-xl font-bold mb-4">QC演習システム</h1>
+
+      {error && <p className="text-red-600">Error: {error}</p>}
+      {!error && !data && <p>Loading...</p>}
+      {data && (
+        <pre className="bg-gray-100 p-3 rounded whitespace-pre-wrap break-words">
+          {JSON.stringify(data, null, 2)}
+        </pre>
+      )}
+    </main>
+  );
 }
+
 
 
   // iframe高さ調整（WordPress側へ通知）

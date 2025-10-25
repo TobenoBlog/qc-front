@@ -64,7 +64,4 @@ export default function Practice() {
     </main>
   );
 }
-import dynamic from "next/dynamic";
-const Flow = dynamic(() => import("../../components/PracticeFlow"), { ssr: false });
-export default function Page(){ return <Flow />; }
 

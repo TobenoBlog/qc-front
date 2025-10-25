@@ -1,5 +1,5 @@
 export async function apiFetch<T>(path: string, token: string, init?: RequestInit): Promise<T> {
-  const base = process.env.NEXT_PUBLIC_QC_API_BASE!;
+  const base = process.env.NEXT_PUBLIC_API_BASE!;
   const res = await fetch(`${base}${path}`, {
     ...init,
     headers: {

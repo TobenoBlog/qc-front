@@ -1,7 +1,7 @@
 // app/api/generate/route.ts
 import { NextResponse } from "next/server";
 
-const API_BASE = process.NEXT_PUBLIC_API_BASE!; // 例: https://qc-api.onrender.com
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE!; // 例: https://qc-api.onrender.com
 // 必要なら JWT を挿入
 const API_JWT = process.env.API_JWT; // ない場合は undefined でOK
 

@@ -7,8 +7,9 @@ export default function Practice() {
 
   useEffect(() => {
     const sp = new URLSearchParams(window.location.search);
-    const jwt = sp.get("jwt");
-    const base = process.env.NEXT_PUBLIC_API_BASE || "https://qc-api.onrender.com";
+    const jwt = sp.get("token"); // ←ここを "jwt" → "token" に変更！
+    const base =
+      process.env.NEXT_PUBLIC_API_BASE || "https://qc-api.onrender.com";
 
     if (!jwt) {
       setError("JWT が見つかりません（WPからアクセスしてください）");
@@ -17,12 +18,16 @@ export default function Practice() {
 
     fetch(`${base}/practice?jwt=${encodeURIComponent(jwt)}`)
       .then(async (r) => {
-        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        if (!r.ok) throw new Error(`Error: ${r.status} ${r.statusText}`);
         return r.json();
       })
-      .then(setData)
-      .catch((e) => setError(String(e)));
+      .then((j) => setData(j))
+      .catch((e) => setError(e.message));
   }, []);
+
+  // 以下、描画部分はそのままでOK
+}
+
 
   // iframe高さ調整（WordPress側へ通知）
   useEffect(() => {

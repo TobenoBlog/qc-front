@@ -1,4 +1,40 @@
-// lib/api.ts
+// qc_front/lib/api.ts
+
+// ====== Generate ======
+export type Topic = "mean" | "variance" | "correlation" | "pchart" | "regression";
+
+export type GenerateRequest = {
+  topic: Topic;     // 例: "mean"
+  level: number;    // 例: 1〜5
+  count: number;    // 例: 1〜20
+};
+
+export type GeneratedProblem = {
+  id: string;
+  title: string;
+  body?: string;
+};
+
+export type GenerateResponse = {
+  problems: GeneratedProblem[];
+};
+
+export async function postGenerate(req: GenerateRequest): Promise<GenerateResponse> {
+  const res = await fetch("/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(req),
+  });
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`/generate ${res.status} ${txt.slice(0, 160)}`);
+  }
+  // 期待レスポンス: { problems: [{ id, title, body? }, ...] }
+  return res.json();
+}
+
+// ====== Grade / Progress ======
 export type GradeRequest = {
   questionId: string;
   answer: string;
@@ -11,7 +47,6 @@ export type GradeResponse = {
     expected?: string | number;
     tolerance?: number;
   };
-  // 他、必要ならここに拡張
 };
 
 export async function postGrade(req: GradeRequest): Promise<GradeResponse> {

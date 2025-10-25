@@ -1,35 +1,17 @@
-"use client";
-import { useEffect, useState } from "react";
+'use client';
 
-export default function Practice() {
-  const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+import dynamic from 'next/dynamic';
 
-  // データ取得
-  useEffect(() => {
-    const sp = new URLSearchParams(window.location.search);
-    const jwt = sp.get("token"); // WP側と統一
-    const base =
-      process.env.NEXT_PUBLIC_API_BASE || "https://qc-api.onrender.com";
+// PracticeFlow コンポーネントをクライアント側で読み込む
+const Flow = dynamic(() => import('../../components/PracticeFlow'), { ssr: false });
 
-    if (!jwt) {
-      setError("JWT が見つかりません（WPからアクセスしてください）");
-      return;
-    }
-
-    const api = base.replace(/\/+$/, ""); // 末尾スラッシュ除去
-
-    (async () => {
-      try {
-        const r = await fetch(`${api}/practice?jwt=${encodeURIComponent(jwt)}`);
-        if (!r.ok) throw new Error(`Error: ${r.status} ${r.statusText}`);
-        const j = await r.json();
-        setData(j);
-      } catch (e: any) {
-        setError(String(e?.message ?? e));
-      }
-    })();
-  }, []);
+export default function PracticePage() {
+  return (
+    <main className="min-h-screen bg-gray-50">
+      <Flow />
+    </main>
+  );
+}
 
   // iframe 高さ通知（WP側）
   useEffect(() => {

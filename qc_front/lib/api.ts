@@ -20,7 +20,7 @@ export type GenerateResponse = {
 };
 
 export async function postGenerate(req: GenerateRequest): Promise<GenerateResponse> {
-  const res = await fetch("/generate", {
+  const res = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

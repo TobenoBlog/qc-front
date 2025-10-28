@@ -50,7 +50,7 @@ export type GradeResponse = {
 };
 
 export async function postGrade(req: GradeRequest): Promise<GradeResponse> {
-  const res = await fetch("/grade", {
+  const res = await fetch("/api/grade", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -64,7 +64,7 @@ export async function postGrade(req: GradeRequest): Promise<GradeResponse> {
 }
 
 export async function postProgress(questionId: string): Promise<{ ok: boolean }> {
-  const res = await fetch("/progress", {
+  const res = await fetch("/api/progress", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

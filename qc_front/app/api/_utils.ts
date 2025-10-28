@@ -4,8 +4,10 @@ import { NextResponse } from "next/server";
 
 export const API_BASE = process.env.API_BASE!; // 例: https://qc-api.onrender.com
 
-export function getJwtFromCookie(): string | null {
-  const c = cookies().get("qc_jwt");
+// ★ Promise になっているので async/await で取得する
+export async function getJwtFromCookie(): Promise<string | null> {
+  const jar = await cookies();          // ← ここを await に
+  const c = jar.get("qc_jwt");
   return c?.value ?? null;
 }
 
@@ -14,7 +16,7 @@ export async function proxyJson(
   method: "POST" | "GET",
   body?: unknown
 ) {
-  const jwt = getJwtFromCookie();
+  const jwt = await getJwtFromCookie(); // ← await に変更
   if (!jwt) {
     return NextResponse.json({ detail: "Missing token (frontend)" }, { status: 401 });
   }
@@ -23,10 +25,9 @@ export async function proxyJson(
     method,
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${jwt}`,      // ★ Authorization に載せる
+      "Authorization": `Bearer ${jwt}`,
     },
     body: body ? JSON.stringify(body) : undefined,
-    // サーバー→サーバー通信なので credentials は不要
     cache: "no-store",
   });
 

@@ -1,12 +1,7 @@
-// qc_front/lib/api.ts
-
-// ====== Generate ======
-export type Topic = "mean" | "variance" | "correlation" | "pchart" | "regression";
-
 export type GenerateRequest = {
-  topic: Topic;     // 例: "mean"
-  level: number;    // 例: 1〜5
-  count: number;    // 例: 1〜20
+  topic: string;
+  level: number;
+  count: number;
 };
 
 export type GeneratedProblem = {
@@ -15,64 +10,44 @@ export type GeneratedProblem = {
   body?: string;
 };
 
-export type GenerateResponse = {
-  problems: GeneratedProblem[];
-};
-
-export async function postGenerate(req: GenerateRequest): Promise<GenerateResponse> {
-  const res = await fetch("/api/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(req),
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`/generate ${res.status} ${txt.slice(0, 160)}`);
-  }
-  // 期待レスポンス: { problems: [{ id, title, body? }, ...] }
-  return res.json();
-}
-
-// ====== Grade / Progress ======
 export type GradeRequest = {
   questionId: string;
   answer: string;
 };
 
-export type GradeResponse = {
+export type GradeResult = {
   correct: boolean;
-  feedback?: {
-    message: string;
-    expected?: string | number;
-    tolerance?: number;
-  };
+  feedback?: { message: string; expected?: number; tolerance?: number };
 };
 
-export async function postGrade(req: GradeRequest): Promise<GradeResponse> {
-  const res = await fetch("/api/grade", {
+export type ProgressResult = {
+  ok: boolean;
+};
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
+const TOKEN = typeof window !== "undefined" ? localStorage.getItem("qc_jwt") : null;
+
+async function postJson<T>(path: string, data: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify(req),
+    headers: {
+      "Content-Type": "application/json",
+      ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
+    },
+    body: JSON.stringify(data),
   });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`/grade ${res.status} ${txt.slice(0, 120)}`);
-  }
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
   return res.json();
 }
 
-export async function postProgress(questionId: string): Promise<{ ok: boolean }> {
-  const res = await fetch("/api/progress", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ questionId }),
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`/progress ${res.status} ${txt.slice(0, 120)}`);
-  }
-  return res.json();
+export async function postGenerate(req: GenerateRequest) {
+  return postJson<{ problems: GeneratedProblem[] }>("/generate", req);
+}
+
+export async function postGrade(req: GradeRequest) {
+  return postJson<GradeResult>("/grade", req);
+}
+
+export async function postProgress(req: GradeRequest) {
+  return postJson<ProgressResult>("/progress", req);
 }

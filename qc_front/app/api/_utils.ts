@@ -1,12 +1,12 @@
-// app/api/_utils.ts
+// qc_front/app/api/_utils.ts
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export const API_BASE = process.env.API_BASE || "";
+// Vercel の “サーバー用” 環境変数を使う（公開しない）
+export const API_BASE = process.env.API_BASE || ""; // 例: https://qc-api-1.onrender.com
 
-export async function getJwtFromCookie(): Promise<string | null> {
-  // 👇 cookies() が Promise になったので await が必要
-  const c = await cookies();
+async function getJwtFromCookie(): Promise<string | null> {
+  const c = await cookies();          // Next.js v15 は Promise
   return c.get("qc_jwt")?.value ?? null;
 }
 
@@ -36,7 +36,8 @@ export async function proxyJson(
       method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${jwt}`,
+        // Cookieのqc_jwtを Authorization に変換してAPIへ
+        Authorization: `Bearer ${jwt}`,
       },
       body: body ? JSON.stringify(body) : undefined,
       cache: "no-store",

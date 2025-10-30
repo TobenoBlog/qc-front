@@ -1,53 +1,28 @@
-export type GenerateRequest = {
-  topic: string;
-  level: number;
-  count: number;
-};
-
-export type GeneratedProblem = {
-  id: string;
-  title: string;
-  body?: string;
-};
-
-export type GradeRequest = {
-  questionId: string;
-  answer: string;
-};
-
-export type GradeResult = {
-  correct: boolean;
-  feedback?: { message: string; expected?: number; tolerance?: number };
-};
-
-export type ProgressResult = {
-  ok: boolean;
-};
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
-const TOKEN = typeof window !== "undefined" ? localStorage.getItem("qc_jwt") : null;
+// qc_front/lib/api.ts
+export type GenerateRequest = { topic: string; level: number; count: number };
+export type GeneratedProblem = { id: string; title: string; body?: string };
+export type GradeRequest = { questionId: string; answer: string };
+export type GradeResult = { correct: boolean; feedback?: { message: string; expected?: number; tolerance?: number } };
+export type ProgressResult = { ok: boolean };
 
 async function postJson<T>(path: string, data: unknown): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  // 相対パスで Next の API を叩く（Cookieはサーバー側でBearerに変換）
+  const res = await fetch(`/api${path}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
-    },
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
   return res.json();
 }
 
-export async function postGenerate(req: GenerateRequest) {
+export function postGenerate(req: GenerateRequest) {
   return postJson<{ problems: GeneratedProblem[] }>("/generate", req);
 }
-
-export async function postGrade(req: GradeRequest) {
+export function postGrade(req: GradeRequest) {
   return postJson<GradeResult>("/grade", req);
 }
-
-export async function postProgress(req: GradeRequest) {
+export function postProgress(req: GradeRequest) {
   return postJson<ProgressResult>("/progress", req);
 }

@@ -6,7 +6,6 @@ export type GradeResult = { correct: boolean; feedback?: { message: string; expe
 export type ProgressResult = { ok: boolean };
 
 async function postJson<T>(path: string, data: unknown): Promise<T> {
-  // 相対パスで Next の API を叩く（Cookieはサーバー側でBearerに変換）
   const res = await fetch(`/api${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -16,13 +15,6 @@ async function postJson<T>(path: string, data: unknown): Promise<T> {
   if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
   return res.json();
 }
-
-export function postGenerate(req: GenerateRequest) {
-  return postJson<{ problems: GeneratedProblem[] }>("/generate", req);
-}
-export function postGrade(req: GradeRequest) {
-  return postJson<GradeResult>("/grade", req);
-}
-export function postProgress(req: GradeRequest) {
-  return postJson<ProgressResult>("/progress", req);
-}
+export const postGenerate = (req: GenerateRequest) => postJson<{ problems: GeneratedProblem[] }>("/generate", req);
+export const postGrade     = (req: GradeRequest)     => postJson<GradeResult>("/grade", req);
+export const postProgress  = (req: GradeRequest)     => postJson<ProgressResult>("/progress", req);

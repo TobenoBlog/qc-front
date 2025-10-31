@@ -1,6 +1,4 @@
-// qc_front/app/api/progress/route.ts
 import { proxyJson } from "@/app/api/_utils";
-
 export async function POST(req: Request) {
   const body = await req.json();
   return proxyJson("/progress", "POST", body);

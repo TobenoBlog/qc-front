@@ -29,7 +29,7 @@ export default function PracticePage() {
 
       {/* 出題設定 */}
       <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-3 text-blue-300">① 出題設定</h2>
+        <h2 className="text-lg font-semibold mb-3 text-blue-300">出題設定</h2>
         <label className="block mb-2">
           カテゴリ
           <select
@@ -68,7 +68,7 @@ export default function PracticePage() {
       {/* 問題表示 */}
       {problems.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-semibold mb-3 text-green-300">② 問題</h2>
+          <h2 className="text-lg font-semibold mb-3 text-green-300">問題</h2>
           <p className="whitespace-pre-wrap bg-gray-900 border border-gray-700 rounded p-3 mb-3 text-gray-100">
             {problems[0].title}
           </p>
@@ -93,7 +93,7 @@ export default function PracticePage() {
       {/* 採点結果 */}
       {result && (
         <section>
-          <h2 className="text-lg font-semibold mb-3 text-red-300">③ 採点結果</h2>
+          <h2 className="text-lg font-semibold mb-3 text-red-300">採点結果</h2>
           <div
             className={`border rounded p-4 ${
               result.correct

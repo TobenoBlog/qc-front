@@ -18,3 +18,19 @@ async function postJson<T>(path: string, data: unknown): Promise<T> {
 export const postGenerate = (req: GenerateRequest) => postJson<{ problems: GeneratedProblem[] }>("/generate", req);
 export const postGrade     = (req: GradeRequest)     => postJson<GradeResult>("/grade", req);
 export const postProgress  = (req: GradeRequest)     => postJson<ProgressResult>("/progress", req);
+
+
+
+export type ProgressSummary = {
+  user_id: string;
+  total: number;
+  correct: number;
+  accuracy: number; // 0〜1
+  by_type: Record<string, { total: number; correct: number }>;
+};
+
+export async function getProgress(): Promise<ProgressSummary> {
+  const res = await fetch(`/api/progress`, { method: "GET", cache: "no-store" });
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  return res.json();
+}

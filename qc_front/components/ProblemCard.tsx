@@ -90,13 +90,7 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
             )}
           </div>
 
-          {(graded as any)?.explanation && (
-            <div className="p-3 rounded bg-gray-900 text-gray-100 text-sm whitespace-pre-wrap">
-              🧠 解説
-              <br />
-              {(graded as any).explanation}
-            </div>
-          )}
+      
         </div>
       )}
     </div>

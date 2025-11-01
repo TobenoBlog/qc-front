@@ -8,6 +8,14 @@ type Props = {
   title: string;
   onGraded: (correct: boolean, feedback: string) => void;
 };
+{(graded as any)?.explanation && (
+  <div className="p-3 rounded bg-gray-900 text-gray-100 text-sm whitespace-pre-wrap">
+    🧠 解説
+    <br />
+    {(graded as any).explanation}
+  </div>
+)}
+
 
 export default function ProblemCard({ id, title, onGraded }: Props) {
   const [answer, setAnswer] = useState("");

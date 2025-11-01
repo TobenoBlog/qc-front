@@ -34,3 +34,9 @@ export async function getProgress(): Promise<ProgressSummary> {
   if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
   return res.json();
 }
+// qc_front/lib/api.ts の GradeResult 型
+export type GradeResult = {
+  correct: boolean;
+  feedback?: { message: string; expected?: number; tolerance?: number };
+  explanation?: string; // ★ 追加
+};

@@ -8,29 +8,20 @@ type Props = {
   title: string;
   onGraded: (correct: boolean, feedback: string) => void;
 };
-{(graded as any)?.explanation && (
-  <div className="p-3 rounded bg-gray-900 text-gray-100 text-sm whitespace-pre-wrap">
-    🧠 解説
-    <br />
-    {(graded as any).explanation}
-  </div>
-)}
-
 
 export default function ProblemCard({ id, title, onGraded }: Props) {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isComposing, setIsComposing] = useState(false); // IME対策
-  const [graded, setGraded] = useState<GradeResult | null>(null); // ★ 採点結果を保持
+  const [isComposing, setIsComposing] = useState(false);
+  const [graded, setGraded] = useState<GradeResult | null>(null); // ← ここで定義！
 
   async function handleSubmit() {
     if (!answer.trim() || loading) return;
     setLoading(true);
     try {
       const res = await postGrade({ questionId: id, answer });
-      setGraded(res); // ★ 解説も含めて保持
+      setGraded(res); // ← 採点結果を保存
       onGraded(res.correct, res.feedback?.message ?? "");
-      // 進捗はフロント契約上 questionId だけでOK（answerは無視される）
       await postProgress({ questionId: id, answer });
     } catch (e) {
       alert(`採点エラー: ${e}`);
@@ -44,7 +35,7 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
       <h2 className="font-semibold">2️⃣ 問題</h2>
 
       <pre className="text-sm whitespace-pre-wrap bg-neutral-100 p-3 rounded border border-neutral-800">
-{title}
+        {title}
       </pre>
 
       <div className="space-y-2">
@@ -60,9 +51,6 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
               handleSubmit();
             }
           }}
-          autoCapitalize="off"
-          autoCorrect="off"
-          enterKeyHint="done"
           className="w-full border border-neutral-800 rounded px-3 py-2 bg-white"
           placeholder="例：50.12（回帰は 0.74,-2.50）"
         />
@@ -76,7 +64,7 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
         </button>
       </div>
 
-      {/* ★ 採点結果＆解説 */}
+      {/* 採点結果・解説表示 */}
       {graded && (
         <div className="space-y-3 pt-2">
           <div
@@ -89,11 +77,11 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
             <div className="font-bold">
               {graded.correct ? "⭕ 正解！" : "❌ 不正解"}
             </div>
+
             {graded.feedback?.message && (
-              <div className="mt-1 text-sm">
-                {graded.feedback.message}
-              </div>
+              <div className="mt-1 text-sm">{graded.feedback.message}</div>
             )}
+
             {"expected" in (graded.feedback ?? {}) && (
               <div className="mt-1 text-sm">
                 期待値: {(graded.feedback as any).expected}（許容±
@@ -102,11 +90,11 @@ export default function ProblemCard({ id, title, onGraded }: Props) {
             )}
           </div>
 
-          {graded.explanation && (
+          {(graded as any)?.explanation && (
             <div className="p-3 rounded bg-gray-900 text-gray-100 text-sm whitespace-pre-wrap">
               🧠 解説
               <br />
-              {graded.explanation}
+              {(graded as any).explanation}
             </div>
           )}
         </div>

@@ -4,12 +4,7 @@ export type GeneratedProblem = { id: string; title: string; body?: string };
 export type GradeRequest = { questionId: string; answer: string };
 export type ProgressResult = { ok: boolean };
 
-// ★ ここを必ずこの定義にする
-export type GradeResult = {
-  correct: boolean;
-  feedback?: { message: string; expected?: number | [number, number]; tolerance?: number };
-  explanation?: string; // ← ★ 追加
-};
+
 
 async function postJson<T>(path: string, data: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
